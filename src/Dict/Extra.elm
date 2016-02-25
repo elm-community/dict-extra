@@ -1,8 +1,4 @@
-module Dict.Extra
-  ( groupBy
-  , removeWhen
-  ) where
-
+module Dict.Extra (groupBy, removeWhen) where
 
 {-| Convenience functions for working with Dict
 
@@ -13,8 +9,7 @@ module Dict.Extra
 @docs removeWhen
 -}
 
-
-import Dict exposing (..)
+import Dict exposing (Dict)
 
 
 {-| Takes a key-fn and a list, creates a Dict which maps the key returned from key-fn, to a list of matching elements.
@@ -28,19 +23,25 @@ groupBy : (a -> comparable) -> List a -> Dict comparable (List a)
 groupBy keyfn list =
   groupByHelp keyfn list Dict.empty
 
+
 groupByHelp : (a -> comparable) -> List a -> Dict comparable (List a) -> Dict comparable (List a)
 groupByHelp keyfn list acc =
   case list of
-    x::xs ->
-      let
-        currentKey = keyfn x
-        (newEntry, remains) = List.partition (\ a -> keyfn a == currentKey) list
-        newAcc = Dict.insert currentKey newEntry acc
-      in
-        groupByHelp keyfn remains newAcc
-
     [] ->
       acc
+
+    x :: xs ->
+      let
+        currentKey =
+          keyfn x
+
+        ( newEntry, remains ) =
+          List.partition (\a -> keyfn a == currentKey) list
+
+        newAcc =
+          Dict.insert currentKey newEntry acc
+      in
+        groupByHelp keyfn remains newAcc
 
 
 {-| Keep elements which fails to satisfy the predicate.
