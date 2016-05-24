@@ -36,10 +36,10 @@ groupByHelp keyfn list acc =
                     keyfn x
 
                 ( newEntry, remains ) =
-                    List.partition (\a -> keyfn a == currentKey) list
+                    List.partition (\a -> keyfn a == currentKey) xs
 
                 newAcc =
-                    Dict.insert currentKey newEntry acc
+                    Dict.insert currentKey (x :: newEntry) acc
             in
                 groupByHelp keyfn remains newAcc
 
