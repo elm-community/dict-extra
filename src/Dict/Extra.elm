@@ -17,7 +17,7 @@ import Dict exposing (Dict)
     mary = {groupId: 1, name: "Mary"}
     jack = {groupId: 2, name: "Jack"}
     jill = {groupId: 1, name: "Jill"}
-    groupBy .groupId [mary, jack, jill] == Dict.fromList [(2, [jack]), (1, [jill, mary])]
+    groupBy .groupId [mary, jack, jill] == Dict.fromList [(1, [jill, mary]), (2, [jack])]
 -}
 groupBy : (a -> comparable) -> List a -> Dict comparable (List a)
 groupBy keyfn list =
