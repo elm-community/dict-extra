@@ -21,27 +21,16 @@ import Dict exposing (Dict)
 -}
 groupBy : (a -> comparable) -> List a -> Dict comparable (List a)
 groupBy keyfn list =
-    groupByHelp keyfn list Dict.empty
-
-
-groupByHelp : (a -> comparable) -> List a -> Dict comparable (List a) -> Dict comparable (List a)
-groupByHelp keyfn list acc =
-    case list of
-        [] ->
-            acc
-
-        x :: xs ->
+    List.foldl
+        (\x acc ->
             let
-                currentKey =
+                key =
                     keyfn x
-
-                ( newEntry, remains ) =
-                    List.partition (\a -> keyfn a == currentKey) list
-
-                newAcc =
-                    Dict.insert currentKey newEntry acc
             in
-                groupByHelp keyfn remains newAcc
+                Dict.update key (Maybe.map ((::) x) >> Maybe.withDefault [ x ] >> Just) acc
+        )
+        Dict.empty
+        list
 
 
 {-| Keep elements which fails to satisfy the predicate.

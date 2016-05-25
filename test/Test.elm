@@ -26,7 +26,7 @@ groupByTests : Test
 groupByTests =
     suite "groupBy"
         [ test "example"
-            <| assertEqual [ ( 1, [ mary, jill ] ), ( 2, [ jack ] ) ]
+            <| assertEqual [ ( 1, [ jill, mary ] ), ( 2, [ jack ] ) ]
             <| Dict.toList (groupBy .groupId [ mary, jack, jill ])
         ]
 

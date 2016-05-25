@@ -7332,39 +7332,34 @@ var _user$project$Dict_Extra$removeWhen = F2(
 				}),
 			dict);
 	});
-var _user$project$Dict_Extra$groupByHelp = F3(
-	function (keyfn, list, acc) {
-		groupByHelp:
-		while (true) {
-			var _p0 = list;
-			if (_p0.ctor === '[]') {
-				return acc;
-			} else {
-				var currentKey = keyfn(_p0._0);
-				var _p1 = A2(
-					_elm_lang$core$List$partition,
-					function (a) {
-						return _elm_lang$core$Native_Utils.eq(
-							keyfn(a),
-							currentKey);
-					},
-					list);
-				var newEntry = _p1._0;
-				var remains = _p1._1;
-				var newAcc = A3(_elm_lang$core$Dict$insert, currentKey, newEntry, acc);
-				var _v1 = keyfn,
-					_v2 = remains,
-					_v3 = newAcc;
-				keyfn = _v1;
-				list = _v2;
-				acc = _v3;
-				continue groupByHelp;
-			}
-		}
-	});
 var _user$project$Dict_Extra$groupBy = F2(
 	function (keyfn, list) {
-		return A3(_user$project$Dict_Extra$groupByHelp, keyfn, list, _elm_lang$core$Dict$empty);
+		return A3(
+			_elm_lang$core$List$foldl,
+			F2(
+				function (x, acc) {
+					var key = keyfn(x);
+					return A3(
+						_elm_lang$core$Dict$update,
+						key,
+						function (_p0) {
+							return _elm_lang$core$Maybe$Just(
+								A2(
+									_elm_lang$core$Maybe$withDefault,
+									_elm_lang$core$Native_List.fromArray(
+										[x]),
+									A2(
+										_elm_lang$core$Maybe$map,
+										F2(
+											function (x, y) {
+												return A2(_elm_lang$core$List_ops['::'], x, y);
+											})(x),
+										_p0)));
+						},
+						acc);
+				}),
+			_elm_lang$core$Dict$empty,
+			list);
 	});
 
 var _user$project$Test$removeWhenTests = A2(
@@ -7419,7 +7414,7 @@ var _user$project$Test$groupByTests = A2(
 						ctor: '_Tuple2',
 						_0: 1,
 						_1: _elm_lang$core$Native_List.fromArray(
-							[_user$project$Test$mary, _user$project$Test$jill])
+							[_user$project$Test$jill, _user$project$Test$mary])
 					},
 						{
 						ctor: '_Tuple2',
