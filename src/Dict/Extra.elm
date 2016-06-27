@@ -43,11 +43,11 @@ removeWhen pred dict =
     Dict.filter (\c v -> not (pred c v)) dict
 
 
-{-| Keep a key-value pair exactly if its key does not appear in the list.
+{-| Keep a key-value pair exactly if its key does not appear in the set.
 -}
-removeMany : List comparable -> Dict comparable v -> Dict comparable v
-removeMany list dict =
-    List.foldl Dict.remove dict list
+removeMany : Set comparable -> Dict comparable v -> Dict comparable v
+removeMany set dict =
+    Set.foldl Dict.remove dict set
 
 
 {-| Keep a key-value pair exactly if its key appears in the set.
