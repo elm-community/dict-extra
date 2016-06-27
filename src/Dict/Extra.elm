@@ -53,5 +53,5 @@ removeMany set dict =
 {-| Keep a key-value pair exactly if its key appears in the set.
 -}
 keepOnly : Set comparable -> Dict comparable v -> Dict comparable v
-keepOnly set =
-    Dict.filter (\k _ -> Set.member k set)
+keepOnly set dict =
+    Set.foldl (\k acc -> Maybe.withDefault acc (Maybe.map (\v -> Dict.insert k v acc) (Dict.get k dict))) Dict.empty set
