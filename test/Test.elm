@@ -3,6 +3,7 @@ module Test exposing (..)
 import ElmTest exposing (..)
 import Dict
 import Dict.Extra exposing (..)
+import Set
 
 
 main : Program Never
@@ -15,6 +16,8 @@ tests =
     suite "Dict tests"
         [ groupByTests
         , removeWhenTests
+        , removeManyTests
+        , keepOnlyTests
         ]
 
 
@@ -62,4 +65,30 @@ removeWhenTests =
         [ test "example"
             <| assertEqual (Dict.fromList [ ( "Jack", 2 ) ])
             <| removeWhen (\_ v -> v == 1) (Dict.fromList [ ( "Mary", 1 ), ( "Jack", 2 ), ( "Jill", 1 ) ])
+        ]
+
+
+
+-- removeMany
+
+
+removeManyTests : Test
+removeManyTests =
+    suite "removeMany"
+        [ test "example"
+            <| assertEqual (Dict.fromList [ ( "Jack", 2 ) ])
+            <| removeMany [ "Mary", "Jill" ] (Dict.fromList [ ( "Mary", 1 ), ( "Jack", 2 ), ( "Jill", 1 ) ])
+        ]
+
+
+
+-- keepOnly
+
+
+keepOnlyTests : Test
+keepOnlyTests =
+    suite "keepOnly"
+        [ test "example"
+            <| assertEqual (Dict.fromList [ ( "Jack", 2 ), ( "Jill", 1 ) ])
+            <| keepOnly (Set.fromList [ "Jack", "Jill" ]) (Dict.fromList [ ( "Mary", 1 ), ( "Jack", 2 ), ( "Jill", 1 ) ])
         ]
