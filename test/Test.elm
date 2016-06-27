@@ -77,7 +77,7 @@ removeManyTests =
     suite "removeMany"
         [ test "example"
             <| assertEqual (Dict.fromList [ ( "Jack", 2 ) ])
-            <| removeMany [ "Mary", "Jill" ] (Dict.fromList [ ( "Mary", 1 ), ( "Jack", 2 ), ( "Jill", 1 ) ])
+            <| removeMany (Set.fromList [ "Mary", "Jill" ]) (Dict.fromList [ ( "Mary", 1 ), ( "Jack", 2 ), ( "Jill", 1 ) ])
         ]
 
 
