@@ -15,6 +15,7 @@ tests : Test
 tests =
     suite "Dict tests"
         [ groupByTests
+        , fromListByTests
         , removeWhenTests
         , removeManyTests
         , keepOnlyTests
@@ -28,14 +29,14 @@ tests =
 groupByTests : Test
 groupByTests =
     suite "groupBy"
-        [ test "example"
-            <| assertEqual [ ( 1, [ jill, mary ] ), ( 2, [ jack ] ) ]
-            <| Dict.toList (groupBy .groupId [ mary, jack, jill ])
+        [ test "example" <|
+            assertEqual [ ( 1, [ jill, mary ] ), ( 2, [ jack ] ) ] <|
+                Dict.toList (groupBy .id [ mary, jack, jill ])
         ]
 
 
 type alias GroupByData =
-    { groupId : Int
+    { id : Int
     , name : String
     }
 
@@ -56,15 +57,31 @@ jill =
 
 
 
+-- fromListBy
+
+
+fromListByTests : Test
+fromListByTests =
+    suite "fromListBy"
+        [ test "example" <|
+            assertEqual (Dict.fromList [ ( 2, jack ), ( 1, jill ) ]) <|
+                fromListBy .id [ jack, jill ]
+        , test "replacement" <|
+            assertEqual (Dict.fromList [ ( 2, jack ), ( 1, mary ) ]) <|
+                fromListBy .id [ jack, jill, mary ]
+        ]
+
+
+
 -- removeWhen
 
 
 removeWhenTests : Test
 removeWhenTests =
     suite "removeWhen"
-        [ test "example"
-            <| assertEqual (Dict.fromList [ ( "Jack", 2 ) ])
-            <| removeWhen (\_ v -> v == 1) (Dict.fromList [ ( "Mary", 1 ), ( "Jack", 2 ), ( "Jill", 1 ) ])
+        [ test "example" <|
+            assertEqual (Dict.fromList [ ( "Jack", 2 ) ]) <|
+                removeWhen (\_ v -> v == 1) (Dict.fromList [ ( "Mary", 1 ), ( "Jack", 2 ), ( "Jill", 1 ) ])
         ]
 
 
@@ -75,9 +92,9 @@ removeWhenTests =
 removeManyTests : Test
 removeManyTests =
     suite "removeMany"
-        [ test "example"
-            <| assertEqual (Dict.fromList [ ( "Jack", 2 ) ])
-            <| removeMany (Set.fromList [ "Mary", "Jill" ]) (Dict.fromList [ ( "Mary", 1 ), ( "Jack", 2 ), ( "Jill", 1 ) ])
+        [ test "example" <|
+            assertEqual (Dict.fromList [ ( "Jack", 2 ) ]) <|
+                removeMany (Set.fromList [ "Mary", "Jill" ]) (Dict.fromList [ ( "Mary", 1 ), ( "Jack", 2 ), ( "Jill", 1 ) ])
         ]
 
 
@@ -88,7 +105,7 @@ removeManyTests =
 keepOnlyTests : Test
 keepOnlyTests =
     suite "keepOnly"
-        [ test "example"
-            <| assertEqual (Dict.fromList [ ( "Jack", 2 ), ( "Jill", 1 ) ])
-            <| keepOnly (Set.fromList [ "Jack", "Jill" ]) (Dict.fromList [ ( "Mary", 1 ), ( "Jack", 2 ), ( "Jill", 1 ) ])
+        [ test "example" <|
+            assertEqual (Dict.fromList [ ( "Jack", 2 ), ( "Jill", 1 ) ]) <|
+                keepOnly (Set.fromList [ "Jack", "Jill" ]) (Dict.fromList [ ( "Mary", 1 ), ( "Jack", 2 ), ( "Jill", 1 ) ])
         ]
