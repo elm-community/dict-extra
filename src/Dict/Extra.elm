@@ -35,7 +35,7 @@ groupBy keyfn list =
 
 {-| Create a dictionary from a list of values, by passing a function that can get a key from any such value. This can, for instance, be useful when constructing Dicts from a List of records with `id` fields:
 
-    fromListBy .id [{id=1, name="Jack"}, {id=2, name="Jill"}] == Dict.fromList [(1, { id = 1, name = "Jack" }), (2, { id = 2, name = "Jill" })]
+    fromListBy .id [{ id=1, name="Jack" }, { id=2, name="Jill" }] == Dict.fromList [(1, { id=1, name="Jack" }), (2, { id=2, name="Jill" })]
 -}
 fromListBy : (a -> comparable) -> List a -> Dict comparable a
 fromListBy keyfn xs =
