@@ -1,6 +1,5 @@
-# Convenience functions for working with Dict
+# Dict Extra
 
-Experimental package with convenience functions for working with Dict.
-Note that this API is experimental and likely to go through many more iterations.
+Convenience functions for working with Dict.
 
 Feedback and contributions are very welcome.
