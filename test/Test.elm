@@ -19,6 +19,7 @@ tests =
         , removeWhenTests
         , removeManyTests
         , keepOnlyTests
+        , mapKeysTests
         ]
 
 
@@ -108,4 +109,17 @@ keepOnlyTests =
         [ test "example" <|
             assertEqual (Dict.fromList [ ( "Jack", 2 ), ( "Jill", 1 ) ]) <|
                 keepOnly (Set.fromList [ "Jack", "Jill" ]) (Dict.fromList [ ( "Mary", 1 ), ( "Jack", 2 ), ( "Jill", 1 ) ])
+        ]
+
+
+
+-- mapKeys
+
+
+mapKeysTests : Test
+mapKeysTests =
+    suite "mapKeys"
+        [ test "example" <|
+            assertEqual (Dict.fromList [ ( 2, "Jack" ), ( 3, "Jill" ) ]) <|
+                mapKeys ((+) 1) (Dict.fromList [ ( 1, "Jack" ), ( 2, "Jill" ) ])
         ]

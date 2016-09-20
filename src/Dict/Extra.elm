@@ -5,6 +5,7 @@ module Dict.Extra
         , removeWhen
         , removeMany
         , keepOnly
+        , mapKeys
         )
 
 {-| Convenience functions for working with `Dict`
@@ -77,3 +78,14 @@ keepOnly set dict =
         )
         Dict.empty
         set
+
+
+{-| Apply a function to all keys in a dictionary
+-}
+mapKeys : (comparable -> comparable) -> Dict comparable v -> Dict comparable v
+mapKeys keyMapper dict =
+    let
+        addKey key value d =
+            Dict.insert (keyMapper key) value d
+    in
+        Dict.foldl addKey Dict.empty dict
