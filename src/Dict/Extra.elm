@@ -14,7 +14,7 @@ module Dict.Extra
 @docs groupBy, fromListBy
 
 # Manipulation
-@docs removeWhen, removeMany, keepOnly
+@docs removeWhen, removeMany, keepOnly, mapKeys
 -}
 
 import Dict exposing (Dict)
