@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.0
+
+* Add `mapKeys` function.
+
 ## 1.2.0
 
 * Add `fromListBy` function.
