@@ -1,19 +1,26 @@
-module Test exposing (..)
+port module Main exposing (main, emit)
 
-import ElmTest exposing (..)
+import Test.Runner.Node exposing (run, TestProgram)
+import Test exposing (Test, describe, test, fuzz, fuzz2)
+import Fuzz exposing (Fuzzer, intRange)
+import Expect
+import Json.Encode exposing (Value)
 import Dict
 import Dict.Extra exposing (..)
 import Set
 
 
-main : Program Never
+main : TestProgram
 main =
-    runSuite tests
+    run emit tests
+
+
+port emit : ( String, Value ) -> Cmd msg
 
 
 tests : Test
 tests =
-    suite "Dict tests"
+    describe "Dict tests"
         [ groupByTests
         , fromListByTests
         , removeWhenTests
@@ -29,10 +36,11 @@ tests =
 
 groupByTests : Test
 groupByTests =
-    suite "groupBy"
+    describe "groupBy"
         [ test "example" <|
-            assertEqual [ ( 1, [ jill, mary ] ), ( 2, [ jack ] ) ] <|
+            \() ->
                 Dict.toList (groupBy .id [ mary, jack, jill ])
+                    |> Expect.equal [ ( 1, [ jill, mary ] ), ( 2, [ jack ] ) ]
         ]
 
 
@@ -63,13 +71,15 @@ jill =
 
 fromListByTests : Test
 fromListByTests =
-    suite "fromListBy"
+    describe "fromListBy"
         [ test "example" <|
-            assertEqual (Dict.fromList [ ( 2, jack ), ( 1, jill ) ]) <|
+            \() ->
                 fromListBy .id [ jack, jill ]
+                    |> Expect.equal (Dict.fromList [ ( 2, jack ), ( 1, jill ) ])
         , test "replacement" <|
-            assertEqual (Dict.fromList [ ( 2, jack ), ( 1, mary ) ]) <|
+            \() ->
                 fromListBy .id [ jack, jill, mary ]
+                    |> Expect.equal (Dict.fromList [ ( 2, jack ), ( 1, mary ) ])
         ]
 
 
@@ -79,10 +89,11 @@ fromListByTests =
 
 removeWhenTests : Test
 removeWhenTests =
-    suite "removeWhen"
+    describe "removeWhen"
         [ test "example" <|
-            assertEqual (Dict.fromList [ ( "Jack", 2 ) ]) <|
+            \() ->
                 removeWhen (\_ v -> v == 1) (Dict.fromList [ ( "Mary", 1 ), ( "Jack", 2 ), ( "Jill", 1 ) ])
+                    |> Expect.equal (Dict.fromList [ ( "Jack", 2 ) ])
         ]
 
 
@@ -92,10 +103,11 @@ removeWhenTests =
 
 removeManyTests : Test
 removeManyTests =
-    suite "removeMany"
+    describe "removeMany"
         [ test "example" <|
-            assertEqual (Dict.fromList [ ( "Jack", 2 ) ]) <|
+            \() ->
                 removeMany (Set.fromList [ "Mary", "Jill" ]) (Dict.fromList [ ( "Mary", 1 ), ( "Jack", 2 ), ( "Jill", 1 ) ])
+                    |> Expect.equal (Dict.fromList [ ( "Jack", 2 ) ])
         ]
 
 
@@ -105,10 +117,11 @@ removeManyTests =
 
 keepOnlyTests : Test
 keepOnlyTests =
-    suite "keepOnly"
+    describe "keepOnly"
         [ test "example" <|
-            assertEqual (Dict.fromList [ ( "Jack", 2 ), ( "Jill", 1 ) ]) <|
+            \() ->
                 keepOnly (Set.fromList [ "Jack", "Jill" ]) (Dict.fromList [ ( "Mary", 1 ), ( "Jack", 2 ), ( "Jill", 1 ) ])
+                    |> Expect.equal (Dict.fromList [ ( "Jack", 2 ), ( "Jill", 1 ) ])
         ]
 
 
@@ -118,8 +131,9 @@ keepOnlyTests =
 
 mapKeysTests : Test
 mapKeysTests =
-    suite "mapKeys"
+    describe "mapKeys"
         [ test "example" <|
-            assertEqual (Dict.fromList [ ( 2, "Jack" ), ( 3, "Jill" ) ]) <|
+            \() ->
                 mapKeys ((+) 1) (Dict.fromList [ ( 1, "Jack" ), ( 2, "Jill" ) ])
+                    |> Expect.equal (Dict.fromList [ ( 2, "Jack" ), ( 3, "Jill" ) ])
         ]
