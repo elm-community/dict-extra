@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.1
+
+* Support for Elm 0.18
+
 ## 1.3.0
 
 * Add `mapKeys` function.
