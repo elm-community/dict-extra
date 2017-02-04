@@ -40,7 +40,7 @@ groupByTests =
         [ test "example" <|
             \() ->
                 Dict.toList (groupBy .id [ mary, jack, jill ])
-                    |> Expect.equal [ ( 1, [ jill, mary ] ), ( 2, [ jack ] ) ]
+                    |> Expect.equal [ ( 1, [ mary, jill ] ), ( 2, [ jack ] ) ]
         ]
 
 

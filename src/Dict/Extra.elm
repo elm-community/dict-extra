@@ -27,11 +27,11 @@ Creates a `Dict` which maps the key to a list of matching elements.
     mary = {id=1, name="Mary"}
     jack = {id=2, name="Jack"}
     jill = {id=1, name="Jill"}
-    groupBy .id [mary, jack, jill] == Dict.fromList [(1, [jill, mary]), (2, [jack])]
+    groupBy .id [mary, jack, jill] == Dict.fromList [(1, [mary, jill]), (2, [jack])]
 -}
 groupBy : (a -> comparable) -> List a -> Dict comparable (List a)
 groupBy keyfn list =
-    List.foldl
+    List.foldr
         (\x acc ->
             Dict.update (keyfn x) (Maybe.map ((::) x) >> Maybe.withDefault [ x ] >> Just) acc
         )
@@ -43,18 +43,22 @@ groupBy keyfn list =
 If the function does not return unique keys, earlier values are discarded.
 This can, for instance, be useful when constructing Dicts from a List of records with `id` fields:
 
+    mary = {id=1, name="Mary"}
     jack = {id=2, name="Jack"}
     jill = {id=1, name="Jill"}
-    fromListBy .id [jack, jill] == Dict.fromList [(1, jack), (2, jill)]
+    fromListBy .id [mary, jack, jill] == Dict.fromList [(1, jack), (2, jill)]
 -}
 fromListBy : (a -> comparable) -> List a -> Dict comparable a
 fromListBy keyfn xs =
-    List.foldl (\x acc -> Dict.insert (keyfn x) x acc) Dict.empty xs
+    List.foldl
+        (\x acc -> Dict.insert (keyfn x) x acc)
+        Dict.empty
+        xs
 
 
 {-| Remove elements which satisfies the predicate.
 
-    removeWhen (\c v -> v == 1) Dict.fromList [("Mary", 1), ("Jack", 2), ("Jill", 1)] == Dict.fromList [("Jack", 2)]
+    removeWhen (\_ v -> v == 1) (Dict.fromList [("Mary", 1), ("Jack", 2), ("Jill", 1)]) == Dict.fromList [("Jack", 2)]
 -}
 removeWhen : (comparable -> v -> Bool) -> Dict comparable v -> Dict comparable v
 removeWhen pred dict =
