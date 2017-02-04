@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.2
+
+* `groupBy` now groups elements by order in list.
+
 ## 1.3.1
 
 * Support for Elm 0.18
