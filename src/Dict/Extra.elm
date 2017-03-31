@@ -6,6 +6,7 @@ module Dict.Extra
         , removeMany
         , keepOnly
         , mapKeys
+        , filterMap
         )
 
 {-| Convenience functions for working with `Dict`
@@ -14,7 +15,7 @@ module Dict.Extra
 @docs groupBy, fromListBy
 
 # Manipulation
-@docs removeWhen, removeMany, keepOnly, mapKeys
+@docs removeWhen, removeMany, keepOnly, mapKeys, filterMap
 -}
 
 import Dict exposing (Dict)
@@ -93,3 +94,24 @@ mapKeys keyMapper dict =
             Dict.insert (keyMapper key) value d
     in
         Dict.foldl addKey Dict.empty dict
+
+
+{-| Apply a function that may or may not succeed to all entries in a dictionary,
+but only keep the successes.
+-}
+filterMap :
+    (comparable -> a -> Maybe b)
+    -> Dict comparable a
+    -> Dict comparable b
+filterMap f dict =
+    Dict.foldl
+        (\k v ->
+            case f k v of
+                Just newVal ->
+                    Dict.insert k newVal
+
+                Nothing ->
+                    identity
+        )
+        Dict.empty
+        dict

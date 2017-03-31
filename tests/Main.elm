@@ -5,7 +5,7 @@ import Test exposing (Test, describe, test, fuzz, fuzz2)
 import Fuzz exposing (Fuzzer, intRange)
 import Expect
 import Json.Encode exposing (Value)
-import Dict
+import Dict exposing (Dict)
 import Dict.Extra exposing (..)
 import Set
 
@@ -136,4 +136,34 @@ mapKeysTests =
             \() ->
                 mapKeys ((+) 1) (Dict.fromList [ ( 1, "Jack" ), ( 2, "Jill" ) ])
                     |> Expect.equal (Dict.fromList [ ( 2, "Jack" ), ( 3, "Jill" ) ])
+        ]
+
+
+
+-- filterMap
+
+
+filterMapTests : Test
+filterMapTests =
+    describe "filterMap"
+        [ test "example" <|
+            \() ->
+                let
+                    isTeen : Int -> String -> Maybe String
+                    isTeen n a =
+                        if 13 <= n && n <= 19 then
+                            Just <| String.toUpper a
+                        else
+                            Nothing
+
+                    inputDict : Dict Int String
+                    inputDict =
+                        Dict.fromList
+                            [ ( 5, "Jack" )
+                            , ( 15, "Jill" )
+                            , ( 20, "Jones" )
+                            ]
+                in
+                    filterMap isTeen inputDict
+                        |> Expect.equalDicts (Dict.singleton 15 "JILL")
         ]
