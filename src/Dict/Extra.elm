@@ -98,6 +98,21 @@ mapKeys keyMapper dict =
 
 {-| Apply a function that may or may not succeed to all entries in a dictionary,
 but only keep the successes.
+
+    isTeen : Int -> String -> Maybe String
+    isTeen n a =
+        if 13 <= n && n <= 19 then
+            Just <| String.toUpper a
+        else
+            Nothing
+
+    Dict.fromList
+        [ ( 5, "Jack" )
+        , ( 15, "Jill" )
+        , ( 20, "Jones" )
+        ]
+        |> filterMap isTeen
+        == Dict.singleton 15 "JILL"
 -}
 filterMap :
     (comparable -> a -> Maybe b)
