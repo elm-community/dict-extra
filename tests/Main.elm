@@ -1,8 +1,7 @@
 port module Main exposing (main, emit)
 
 import Test.Runner.Node exposing (run, TestProgram)
-import Test exposing (Test, describe, test, fuzz, fuzz2)
-import Fuzz exposing (Fuzzer, intRange)
+import Test exposing (Test, describe, test)
 import Expect
 import Json.Encode exposing (Value)
 import Dict exposing (Dict)
