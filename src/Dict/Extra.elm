@@ -60,7 +60,8 @@ fromListBy keyfn xs =
 
 {-| Remove elements which satisfies the predicate.
 
-    removeWhen (\_ v -> v == 1) (Dict.fromList [("Mary", 1), ("Jack", 2), ("Jill", 1)]) == Dict.fromList [("Jack", 2)]
+    dict = Dict.fromList [("Mary", 1), ("Jack", 2), ("Jill", 1)]
+    removeWhen (\_ v -> v == 1) dict == Dict.fromList [("Jack", 2)]
 -}
 removeWhen : (comparable -> v -> Bool) -> Dict comparable v -> Dict comparable v
 removeWhen pred dict =
@@ -68,6 +69,9 @@ removeWhen pred dict =
 
 
 {-| Remove a key-value pair if its key appears in the set.
+
+    dict = Dict.fromList [("Mary", 1), ("Jack", 2), ("Jill", 1)]
+    removeMany (Set.fromList ["Mary", "Jill"]) dict == Dict.fromList [("Jack", 2)]
 -}
 removeMany : Set comparable -> Dict comparable v -> Dict comparable v
 removeMany set dict =
@@ -75,6 +79,9 @@ removeMany set dict =
 
 
 {-| Keep a key-value pair if its key appears in the set.
+
+    dict = Dict.fromList [("Mary", 1), ("Jack", 2), ("Jill", 1)]
+    removeMany (Set.fromList ["Jack"]) dict == Dict.fromList [("Jack", 2)]
 -}
 keepOnly : Set comparable -> Dict comparable v -> Dict comparable v
 keepOnly set dict =
@@ -86,7 +93,10 @@ keepOnly set dict =
         set
 
 
-{-| Apply a function to all keys in a dictionary
+{-| Apply a function to all keys in a dictionary.
+
+    mapKeys ((+) 1) (Dict.fromList [(5, "Jack"), (10, "Jill")])
+    == Dict.fromList [(6, "Jack"), (11, "Jill")]
 -}
 mapKeys : (comparable -> comparable) -> Dict comparable v -> Dict comparable v
 mapKeys keyMapper dict =
