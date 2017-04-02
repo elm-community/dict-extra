@@ -7,6 +7,7 @@ module Dict.Extra
         , keepOnly
         , mapKeys
         , filterMap
+        , invert
         )
 
 {-| Convenience functions for working with `Dict`
@@ -15,7 +16,7 @@ module Dict.Extra
 @docs groupBy, fromListBy
 
 # Manipulation
-@docs removeWhen, removeMany, keepOnly, mapKeys, filterMap
+@docs removeWhen, removeMany, keepOnly, mapKeys, filterMap, invert
 -}
 
 import Dict exposing (Dict)
@@ -127,6 +128,22 @@ filterMap f dict =
 
                 Nothing ->
                     identity
+        )
+        Dict.empty
+        dict
+
+
+{-| Inverts the keys and values of an array.
+
+    dict = Dict.fromList [("Jill", 5), ("Jack", 10)]
+    inverted = Dict.fromList [(5, "Jill"), ("Jack", 10)]
+    Dict.invert dict == inverted
+-}
+invert : Dict comparable1 comparable2 -> Dict comparable2 comparable1
+invert dict =
+    Dict.foldl
+        (\k v acc ->
+            Dict.insert v k acc
         )
         Dict.empty
         dict

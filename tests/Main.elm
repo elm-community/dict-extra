@@ -26,6 +26,7 @@ tests =
         , removeManyTests
         , keepOnlyTests
         , mapKeysTests
+        , invertTests
         ]
 
 
@@ -165,4 +166,18 @@ filterMapTests =
                 in
                     filterMap isTeen inputDict
                         |> Expect.equalDicts (Dict.singleton 15 "JILL")
+        ]
+
+
+
+-- Invert
+
+
+invertTests : Test
+invertTests =
+    describe "invert"
+        [ test "example" <|
+            \() ->
+                invert (Dict.fromList [ ( 5, "Jack" ), ( 10, "Jill" ) ])
+                    |> Expect.equalDicts (Dict.fromList [ ( "Jack", 5 ), ( "Jill", 10 ) ])
         ]
