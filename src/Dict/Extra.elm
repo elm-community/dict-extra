@@ -115,19 +115,16 @@ but only keep the successes.
         |> filterMap isTeen
         == Dict.singleton 15 "JILL"
 -}
-filterMap :
-    (comparable -> a -> Maybe b)
-    -> Dict comparable a
-    -> Dict comparable b
+filterMap : (comparable -> a -> Maybe b) -> Dict comparable a -> Dict comparable b
 filterMap f dict =
     Dict.foldl
-        (\k v ->
+        (\k v acc ->
             case f k v of
                 Just newVal ->
-                    Dict.insert k newVal
+                    Dict.insert k newVal acc
 
                 Nothing ->
-                    identity
+                    acc
         )
         Dict.empty
         dict
