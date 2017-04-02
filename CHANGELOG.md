@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4
+
+* Added `filterMap` function.
+* Added `invert` function.
+* Improved documentation.
+
 ## 1.3.2
 
 * `groupBy` now groups elements by order in list.
