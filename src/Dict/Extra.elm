@@ -8,15 +8,26 @@ module Dict.Extra
         , mapKeys
         , filterMap
         , invert
+        , find
         )
 
 {-| Convenience functions for working with `Dict`
 
+
 # List operations
+
 @docs groupBy, fromListBy
 
+
 # Manipulation
+
 @docs removeWhen, removeMany, keepOnly, mapKeys, filterMap, invert
+
+
+# Find
+
+@docs find
+
 -}
 
 import Dict exposing (Dict)
@@ -30,6 +41,7 @@ Creates a `Dict` which maps the key to a list of matching elements.
     jack = {id=2, name="Jack"}
     jill = {id=1, name="Jill"}
     groupBy .id [mary, jack, jill] == Dict.fromList [(1, [mary, jill]), (2, [jack])]
+
 -}
 groupBy : (a -> comparable) -> List a -> Dict comparable (List a)
 groupBy keyfn list =
@@ -49,6 +61,7 @@ This can, for instance, be useful when constructing Dicts from a List of records
     jack = {id=2, name="Jack"}
     jill = {id=1, name="Jill"}
     fromListBy .id [mary, jack, jill] == Dict.fromList [(1, jack), (2, jill)]
+
 -}
 fromListBy : (a -> comparable) -> List a -> Dict comparable a
 fromListBy keyfn xs =
@@ -62,6 +75,7 @@ fromListBy keyfn xs =
 
     dict = Dict.fromList [("Mary", 1), ("Jack", 2), ("Jill", 1)]
     removeWhen (\_ v -> v == 1) dict == Dict.fromList [("Jack", 2)]
+
 -}
 removeWhen : (comparable -> v -> Bool) -> Dict comparable v -> Dict comparable v
 removeWhen pred dict =
@@ -72,6 +86,7 @@ removeWhen pred dict =
 
     dict = Dict.fromList [("Mary", 1), ("Jack", 2), ("Jill", 1)]
     removeMany (Set.fromList ["Mary", "Jill"]) dict == Dict.fromList [("Jack", 2)]
+
 -}
 removeMany : Set comparable -> Dict comparable v -> Dict comparable v
 removeMany set dict =
@@ -82,6 +97,7 @@ removeMany set dict =
 
     dict = Dict.fromList [("Mary", 1), ("Jack", 2), ("Jill", 1)]
     removeMany (Set.fromList ["Jack"]) dict == Dict.fromList [("Jack", 2)]
+
 -}
 keepOnly : Set comparable -> Dict comparable v -> Dict comparable v
 keepOnly set dict =
@@ -97,6 +113,7 @@ keepOnly set dict =
 
     mapKeys ((+) 1) (Dict.fromList [(5, "Jack"), (10, "Jill")])
     == Dict.fromList [(6, "Jack"), (11, "Jill")]
+
 -}
 mapKeys : (comparable -> comparable) -> Dict comparable v -> Dict comparable v
 mapKeys keyMapper dict =
@@ -124,6 +141,7 @@ but only keep the successes.
         ]
         |> filterMap isTeen
         == Dict.singleton 15 "JILL"
+
 -}
 filterMap : (comparable -> a -> Maybe b) -> Dict comparable a -> Dict comparable b
 filterMap f dict =
@@ -144,7 +162,8 @@ filterMap f dict =
 
     dict = Dict.fromList [("Jill", 5), ("Jack", 10)]
     inverted = Dict.fromList [(5, "Jill"), ("Jack", 10)]
-    Dict.invert dict == inverted
+    invert dict == inverted
+
 -}
 invert : Dict comparable1 comparable2 -> Dict comparable2 comparable1
 invert dict =
@@ -154,3 +173,28 @@ invert dict =
         )
         Dict.empty
         dict
+
+
+{-| Find the first key/value pair that matches a predicate.
+
+    dict = Dict.fromList [( 9, "Jill" ), ( 7, "Jill" )]
+    found = find (\key value -> value == "Jill") dict
+    found == Just (7, "Jill")
+
+-}
+find : (comparable -> a -> Bool) -> Dict comparable a -> Maybe ( comparable, a )
+find predicate dict =
+    Dict.toList dict |> find_ predicate
+
+
+find_ : (comparable -> a -> Bool) -> List ( comparable, a ) -> Maybe ( comparable, a )
+find_ predicate tuples =
+    case tuples of
+        [] ->
+            Nothing
+
+        ( key, value ) :: rest ->
+            if predicate key value then
+                Just ( key, value )
+            else
+                find_ predicate rest
