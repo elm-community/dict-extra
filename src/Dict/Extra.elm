@@ -183,18 +183,17 @@ invert dict =
 
 -}
 find : (comparable -> a -> Bool) -> Dict comparable a -> Maybe ( comparable, a )
-find predicate dict =
-    Dict.toList dict |> find_ predicate
+find predicate =
+    Dict.foldl
+        (\key value maybeTuple ->
+            case maybeTuple of
+                Just tuple ->
+                    Just tuple
 
-
-find_ : (comparable -> a -> Bool) -> List ( comparable, a ) -> Maybe ( comparable, a )
-find_ predicate tuples =
-    case tuples of
-        [] ->
-            Nothing
-
-        ( key, value ) :: rest ->
-            if predicate key value then
-                Just ( key, value )
-            else
-                find_ predicate rest
+                Nothing ->
+                    if predicate key value then
+                        Just ( key, value )
+                    else
+                        Nothing
+        )
+        Nothing
