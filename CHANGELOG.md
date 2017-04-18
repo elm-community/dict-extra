@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5
+
+* Added `find` function.
+
 ## 1.4
 
 * Added `filterMap` function.
