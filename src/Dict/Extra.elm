@@ -8,6 +8,7 @@ module Dict.Extra
         , mapKeys
         , filterMap
         , invert
+        , find
         )
 
 {-| Convenience functions for working with `Dict`
@@ -17,6 +18,9 @@ module Dict.Extra
 
 # Manipulation
 @docs removeWhen, removeMany, keepOnly, mapKeys, filterMap, invert
+
+# Find
+@docs find
 -}
 
 import Dict exposing (Dict)
@@ -144,7 +148,7 @@ filterMap f dict =
 
     dict = Dict.fromList [("Jill", 5), ("Jack", 10)]
     inverted = Dict.fromList [(5, "Jill"), ("Jack", 10)]
-    Dict.invert dict == inverted
+    invert dict == inverted
 -}
 invert : Dict comparable1 comparable2 -> Dict comparable2 comparable1
 invert dict =
@@ -154,3 +158,27 @@ invert dict =
         )
         Dict.empty
         dict
+
+
+{-| Find the first key/value pair that matches a predicate.
+
+    dict = Dict.fromList [( 9, "Jill" ), ( 7, "Jill" )]
+    found = find (\key value -> value == "Jill") dict
+    found == Just (7, "Jill")
+
+-}
+find : (comparable -> a -> Bool) -> Dict comparable a -> Maybe ( comparable, a )
+find predicate =
+    Dict.foldl
+        (\key value maybeTuple ->
+            case maybeTuple of
+                Just tuple ->
+                    Just tuple
+
+                Nothing ->
+                    if predicate key value then
+                        Just ( key, value )
+                    else
+                        Nothing
+        )
+        Nothing

@@ -27,6 +27,7 @@ tests =
         , keepOnlyTests
         , mapKeysTests
         , invertTests
+        , findTests
         ]
 
 
@@ -180,4 +181,26 @@ invertTests =
             \() ->
                 invert (Dict.fromList [ ( 5, "Jack" ), ( 10, "Jill" ) ])
                     |> Expect.equalDicts (Dict.fromList [ ( "Jack", 5 ), ( "Jill", 10 ) ])
+        ]
+
+
+
+-- Find
+
+
+findTests : Test
+findTests =
+    describe "find"
+        [ test "find JoMomma" <|
+            \() ->
+                find (\key value -> value == "JoMomma") (Dict.fromList [ ( 5, "Jack" ), ( 10, "Jill" ), ( 77, "JoMomma" ) ])
+                    |> Expect.equal (Just ( 77, "JoMomma" ))
+        , test "can't find JoBuddy" <|
+            \() ->
+                find (\key value -> value == "JoBuddy") (Dict.fromList [ ( 5, "Jack" ), ( 10, "Jill" ), ( 77, "JoMomma" ) ])
+                    |> Expect.equal Nothing
+        , test "find the first Jack" <|
+            \() ->
+                find (\key value -> value == "Jack") (Dict.fromList [ ( 5, "Jack" ), ( 10, "Jill" ), ( 0, "Jack" ) ])
+                    |> Expect.equal (Just ( 0, "Jack" ))
         ]
