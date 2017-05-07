@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0
+
+* `mapKeys` now has a more liberal type signature. Apparently, this is a mayor change.
+
 ## 1.5
 
 * Added `find` function.
