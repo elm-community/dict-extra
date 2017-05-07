@@ -37,10 +37,10 @@ import Set exposing (Set)
 {-| Takes a key-fn and a list.
 Creates a `Dict` which maps the key to a list of matching elements.
 
-    mary = {id=1, name="Mary"}
-    jack = {id=2, name="Jack"}
-    jill = {id=1, name="Jill"}
-    groupBy .id [mary, jack, jill] == Dict.fromList [(1, [mary, jill]), (2, [jack])]
+    >>> import Dict
+
+    >>> groupBy String.length [ "tree" , "apple" , "leaf" ]
+    Dict.fromList [ ( 4, [ "tree", "leaf" ] ), ( 5, [ "apple" ] ) ]
 
 -}
 groupBy : (a -> comparable) -> List a -> Dict comparable (List a)
@@ -55,12 +55,9 @@ groupBy keyfn list =
 
 {-| Create a dictionary from a list of values, by passing a function that can get a key from any such value.
 If the function does not return unique keys, earlier values are discarded.
-This can, for instance, be useful when constructing Dicts from a List of records with `id` fields:
 
-    mary = {id=1, name="Mary"}
-    jack = {id=2, name="Jack"}
-    jill = {id=1, name="Jill"}
-    fromListBy .id [mary, jack, jill] == Dict.fromList [(1, jack), (2, jill)]
+    >>> fromListBy String.length [ "tree" , "apple" , "leaf" ]
+    Dict.fromList [ ( 4, "leaf" ), ( 5, "apple" ) ]
 
 -}
 fromListBy : (a -> comparable) -> List a -> Dict comparable a
@@ -73,8 +70,9 @@ fromListBy keyfn xs =
 
 {-| Remove elements which satisfies the predicate.
 
-    dict = Dict.fromList [("Mary", 1), ("Jack", 2), ("Jill", 1)]
-    removeWhen (\_ v -> v == 1) dict == Dict.fromList [("Jack", 2)]
+    >>> Dict.fromList [ ( "Mary", 1 ), ( "Jack", 2 ), ( "Jill", 1 ) ]
+    ...     |> removeWhen (\_ value -> value == 1 )
+    Dict.fromList [ ( "Jack", 2 ) ]
 
 -}
 removeWhen : (comparable -> v -> Bool) -> Dict comparable v -> Dict comparable v
@@ -84,8 +82,11 @@ removeWhen pred dict =
 
 {-| Remove a key-value pair if its key appears in the set.
 
-    dict = Dict.fromList [("Mary", 1), ("Jack", 2), ("Jill", 1)]
-    removeMany (Set.fromList ["Mary", "Jill"]) dict == Dict.fromList [("Jack", 2)]
+    >>> import Set
+
+    >>> Dict.fromList [ ( "Mary", 1 ), ( "Jack", 2 ), ( "Jill", 1 ) ]
+    ...     |> removeMany (Set.fromList [ "Mary", "Jill" ])
+    Dict.fromList [ ( "Jack", 2 ) ]
 
 -}
 removeMany : Set comparable -> Dict comparable v -> Dict comparable v
@@ -95,8 +96,9 @@ removeMany set dict =
 
 {-| Keep a key-value pair if its key appears in the set.
 
-    dict = Dict.fromList [("Mary", 1), ("Jack", 2), ("Jill", 1)]
-    removeMany (Set.fromList ["Jack"]) dict == Dict.fromList [("Jack", 2)]
+    >>> Dict.fromList [ ( "Mary", 1 ), ( "Jack", 2 ), ( "Jill", 1 ) ]
+    ...     |> keepOnly (Set.fromList [ "Jack", "Jill" ])
+    Dict.fromList [ ( "Jack", 2 ), ( "Jill", 1 ) ]
 
 -}
 keepOnly : Set comparable -> Dict comparable v -> Dict comparable v
@@ -111,8 +113,13 @@ keepOnly set dict =
 
 {-| Apply a function to all keys in a dictionary.
 
-    mapKeys ((+) 1) (Dict.fromList [(5, "Jack"), (10, "Jill")])
-    == Dict.fromList [(6, "Jack"), (11, "Jill")]
+    >>> Dict.fromList [ ( 5, "Jack" ), ( 10, "Jill" ) ]
+    ...     |> mapKeys (\x -> x + 1)
+    Dict.fromList [ ( 6, "Jack" ), ( 11, "Jill" ) ]
+
+    >>> Dict.fromList [ ( 5, "Jack" ), ( 10, "Jill" ) ]
+    ...     |> mapKeys toString
+    Dict.fromList [ ( "5", "Jack" ), ( "10", "Jill" ) ]
 
 -}
 mapKeys : (comparable -> comparable1) -> Dict comparable v -> Dict comparable1 v
@@ -128,20 +135,16 @@ mapKeys keyMapper dict =
 {-| Apply a function that may or may not succeed to all entries in a dictionary,
 but only keep the successes.
 
-    isTeen : Int -> String -> Maybe String
-    isTeen n a =
-        if 13 <= n && n <= 19 then
-            Just <| String.toUpper a
-        else
-            Nothing
-
-    Dict.fromList
-        [ ( 5, "Jack" )
-        , ( 15, "Jill" )
-        , ( 20, "Jones" )
-        ]
-        |> filterMap isTeen
-        == Dict.singleton 15 "JILL"
+    >>> let
+    ...     isTeen n a =
+    ...         if 13 <= n && n <= 19 then
+    ...             Just <| String.toUpper a
+    ...         else
+    ...             Nothing
+    ... in
+    ...     Dict.fromList [ ( 5, "Jack" ), ( 15, "Jill" ), ( 20, "Jones" ) ]
+    ...         |> filterMap isTeen
+    Dict.fromList [ ( 15, "JILL" ) ]
 
 -}
 filterMap : (comparable -> a -> Maybe b) -> Dict comparable a -> Dict comparable b
@@ -161,9 +164,9 @@ filterMap f dict =
 
 {-| Inverts the keys and values of an array.
 
-    dict = Dict.fromList [("Jill", 5), ("Jack", 10)]
-    inverted = Dict.fromList [(5, "Jill"), ("Jack", 10)]
-    invert dict == inverted
+    >>> Dict.fromList [ ("key", "value")  ]
+    ...     |> invert
+    Dict.fromList [ ( "value", "key" ) ]
 
 -}
 invert : Dict comparable1 comparable2 -> Dict comparable2 comparable1
@@ -178,9 +181,13 @@ invert dict =
 
 {-| Find the first key/value pair that matches a predicate.
 
-    dict = Dict.fromList [( 9, "Jill" ), ( 7, "Jill" )]
-    found = find (\_ value -> value == "Jill") dict
-    found == Just (7, "Jill")
+    >>> Dict.fromList [ ( 9, "Jill" ), ( 7, "Jill" ) ]
+    ...     |> find (\_ value -> value == "Jill")
+    Just ( 7, "Jill" )
+
+    >>> Dict.fromList [ ( 9, "Jill" ), ( 7, "Jill" ) ]
+    ...     |> find (\key _ -> key == 5)
+    Nothing
 
 -}
 find : (comparable -> a -> Bool) -> Dict comparable a -> Maybe ( comparable, a )

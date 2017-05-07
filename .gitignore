@@ -1,6 +1,5 @@
 .DS_Store
 
 elm-stuff/
-elm.js
-test/test.js
+tests/Doc
 *~
