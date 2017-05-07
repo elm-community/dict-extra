@@ -115,7 +115,7 @@ keepOnly set dict =
     == Dict.fromList [(6, "Jack"), (11, "Jill")]
 
 -}
-mapKeys : (comparable -> comparable) -> Dict comparable v -> Dict comparable v
+mapKeys : (comparable -> comparable1) -> Dict comparable v -> Dict comparable1 v
 mapKeys keyMapper dict =
     Dict.foldl
         (\k v acc ->

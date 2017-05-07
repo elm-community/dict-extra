@@ -137,6 +137,10 @@ mapKeysTests =
             \() ->
                 mapKeys ((+) 1) (Dict.fromList [ ( 1, "Jack" ), ( 2, "Jill" ) ])
                     |> Expect.equal (Dict.fromList [ ( 2, "Jack" ), ( 3, "Jill" ) ])
+        , test "change type" <|
+            \() ->
+                mapKeys toString (Dict.fromList [ ( 1, "Jack" ), ( 2, "Jill" ) ])
+                    |> Expect.equal (Dict.fromList [ ( "1", "Jack" ), ( "2", "Jill" ) ])
         ]
 
 
