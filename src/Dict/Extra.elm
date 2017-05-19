@@ -2,6 +2,7 @@ module Dict.Extra
     exposing
         ( groupBy
         , fromListBy
+        , fromListWith
         , removeWhen
         , removeMany
         , insertWith
@@ -17,7 +18,7 @@ module Dict.Extra
 
 # List operations
 
-@docs groupBy, fromListBy
+@docs groupBy, fromListBy, fromListWith
 
 
 # Manipulation
@@ -65,6 +66,25 @@ fromListBy : (a -> comparable) -> List a -> Dict comparable a
 fromListBy keyfn xs =
     List.foldl
         (\x acc -> Dict.insert (keyfn x) x acc)
+        Dict.empty
+        xs
+
+
+{-| Like `Dict.fromList`, but you provide a way to deal with
+duplicate keys. Create a dictionary from a list of pairs of keys and
+values, providing a function that is used to combine multiple values
+paired with the same key.
+
+    >>> fromListWith
+    ...     (\a b -> a ++ " " ++ b)
+    ...     [ ( "class", "menu" ), ( "width", "100%" ), ( "class", "big" ) ]
+    Dict.fromList [ ( "class", "menu big" ), ( "width", "100%" ) ]
+
+-}
+fromListWith : (a -> a -> a) -> List ( comparable, a ) -> Dict comparable a
+fromListWith combine xs =
+    List.foldl
+        (\( key, value ) acc -> insertWith combine key value acc)
         Dict.empty
         xs
 
