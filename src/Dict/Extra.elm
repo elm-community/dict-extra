@@ -3,6 +3,7 @@ module Dict.Extra
         ( groupBy
         , fromListBy
         , fromListWith
+        , fromListWithBy
         , removeWhen
         , removeMany
         , insertWith
@@ -18,7 +19,7 @@ module Dict.Extra
 
 # List operations
 
-@docs groupBy, fromListBy, fromListWith
+@docs groupBy, fromListBy, fromListWith, fromListWithBy
 
 
 # Manipulation
@@ -85,6 +86,20 @@ fromListWith : (a -> a -> a) -> List ( comparable, a ) -> Dict comparable a
 fromListWith combine xs =
     List.foldl
         (\( key, value ) acc -> insertWith combine key value acc)
+        Dict.empty
+        xs
+
+
+{-| `fromListBy` and `fromListWith` rolled into one.
+
+    >>> fromListWithBy (\first second -> first) String.length [ "tree" , "apple" , "leaf" ]
+    Dict.fromList [ ( 4, "tree" ), ( 5, "apple" ) ]
+
+-}
+fromListWithBy : (a -> a -> a) -> (a -> comparable) -> List a -> Dict comparable a
+fromListWithBy combine keyfn xs =
+    List.foldl
+        (\x acc -> insertWith combine (keyfn x) x acc)
         Dict.empty
         xs
 
