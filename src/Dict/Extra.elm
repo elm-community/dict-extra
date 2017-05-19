@@ -4,6 +4,7 @@ module Dict.Extra
         , fromListBy
         , removeWhen
         , removeMany
+        , insertWith
         , keepOnly
         , mapKeys
         , filterMap
@@ -21,7 +22,7 @@ module Dict.Extra
 
 # Manipulation
 
-@docs removeWhen, removeMany, keepOnly, mapKeys, filterMap, invert
+@docs removeWhen, removeMany, keepOnly, insertWith, mapKeys, filterMap, invert
 
 
 # Find
@@ -92,6 +93,32 @@ removeWhen pred dict =
 removeMany : Set comparable -> Dict comparable v -> Dict comparable v
 removeMany set dict =
     Set.foldl Dict.remove dict set
+
+
+{-| Insert an element at the given key, providing a combining
+function that used in the case that there is already an
+element at that key. The combining function is called with
+original element and the new element as arguments and
+returns the element to be inserted.
+
+    >>> Dict.fromList [ ( "expenses", 38.25 ), ( "assets", 100.85 ) ]
+    ...     |> insertWith (+) "expenses" 2.50
+    ...     |> insertWith (+) "liabilities" -2.50
+    Dict.fromList [ ( "expenses", 40.75 ), ( "assets", 100.85 ), ( "liabilities", -2.50 ) ]
+
+-}
+insertWith : (v -> v -> v) -> comparable -> v -> Dict comparable v -> Dict comparable v
+insertWith combine key value dict =
+    let
+        with mbValue =
+            case mbValue of
+                Just oldValue ->
+                    Just <| combine oldValue value
+
+                Nothing ->
+                    Just value
+    in
+        Dict.update key with dict
 
 
 {-| Keep a key-value pair if its key appears in the set.
