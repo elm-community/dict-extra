@@ -2,8 +2,11 @@ module Dict.Extra
     exposing
         ( groupBy
         , fromListBy
+        , fromListDedupe
+        , fromListDedupeBy
         , removeWhen
         , removeMany
+        , insertDedupe
         , keepOnly
         , mapKeys
         , filterMap
@@ -16,12 +19,12 @@ module Dict.Extra
 
 # List operations
 
-@docs groupBy, fromListBy
+@docs groupBy, fromListBy, fromListDedupe, fromListDedupeBy
 
 
 # Manipulation
 
-@docs removeWhen, removeMany, keepOnly, mapKeys, filterMap, invert
+@docs removeWhen, removeMany, keepOnly, insertDedupe, mapKeys, filterMap, invert
 
 
 # Find
@@ -68,6 +71,39 @@ fromListBy keyfn xs =
         xs
 
 
+{-| Like `Dict.fromList`, but you provide a way to deal with
+duplicate keys. Create a dictionary from a list of pairs of keys and
+values, providing a function that is used to combine multiple values
+paired with the same key.
+
+    >>> fromListDedupe
+    ...     (\a b -> a ++ " " ++ b)
+    ...     [ ( "class", "menu" ), ( "width", "100%" ), ( "class", "big" ) ]
+    Dict.fromList [ ( "class", "menu big" ), ( "width", "100%" ) ]
+
+-}
+fromListDedupe : (a -> a -> a) -> List ( comparable, a ) -> Dict comparable a
+fromListDedupe combine xs =
+    List.foldl
+        (\( key, value ) acc -> insertDedupe combine key value acc)
+        Dict.empty
+        xs
+
+
+{-| `fromListBy` and `fromListDedupe` rolled into one.
+
+    >>> fromListDedupeBy (\first second -> first) String.length [ "tree" , "apple" , "leaf" ]
+    Dict.fromList [ ( 4, "tree" ), ( 5, "apple" ) ]
+
+-}
+fromListDedupeBy : (a -> a -> a) -> (a -> comparable) -> List a -> Dict comparable a
+fromListDedupeBy combine keyfn xs =
+    List.foldl
+        (\x acc -> insertDedupe combine (keyfn x) x acc)
+        Dict.empty
+        xs
+
+
 {-| Remove elements which satisfies the predicate.
 
     >>> Dict.fromList [ ( "Mary", 1 ), ( "Jack", 2 ), ( "Jill", 1 ) ]
@@ -92,6 +128,32 @@ removeWhen pred dict =
 removeMany : Set comparable -> Dict comparable v -> Dict comparable v
 removeMany set dict =
     Set.foldl Dict.remove dict set
+
+
+{-| Insert an element at the given key, providing a combining
+function that used in the case that there is already an
+element at that key. The combining function is called with
+original element and the new element as arguments and
+returns the element to be inserted.
+
+    >>> Dict.fromList [ ( "expenses", 38.25 ), ( "assets", 100.85 ) ]
+    ...     |> insertDedupe (+) "expenses" 2.50
+    ...     |> insertDedupe (+) "liabilities" -2.50
+    Dict.fromList [ ( "expenses", 40.75 ), ( "assets", 100.85 ), ( "liabilities", -2.50 ) ]
+
+-}
+insertDedupe : (v -> v -> v) -> comparable -> v -> Dict comparable v -> Dict comparable v
+insertDedupe combine key value dict =
+    let
+        with mbValue =
+            case mbValue of
+                Just oldValue ->
+                    Just <| combine oldValue value
+
+                Nothing ->
+                    Just value
+    in
+        Dict.update key with dict
 
 
 {-| Keep a key-value pair if its key appears in the set.
