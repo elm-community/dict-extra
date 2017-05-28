@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1
+
+* `insertDedupe` works like `insert`, but handles the case of duplicate keys.
+* `fromListDedupe` works like `fromList`, but handles the case of duplicate keys.
+* `fromListDedupeBy` works like `fromListBy`, but handles the case of duplicate keys.
+
 ## 2.0
 
 * `mapKeys` now has a more liberal type signature. Apparently, this is a mayor change.
