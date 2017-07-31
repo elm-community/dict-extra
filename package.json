@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "test": "elm-verify-examples && elm-test"
+  },
+  "devDependencies": {
+    "elm-test": "^0.18.7",
+    "elm-verify-examples": "^1.0.2"
+  },
+  "dependencies": {}
+}
