@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2
+
+* `filterGroupBy` is a version of `groupBy` that works similar to `List.filterMap`.
+
 ## 2.1
 
 * `insertDedupe` works like `insert`, but handles the case of duplicate keys.
