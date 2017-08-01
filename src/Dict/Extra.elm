@@ -1,6 +1,7 @@
 module Dict.Extra
     exposing
         ( groupBy
+        , filterGroupBy
         , fromListBy
         , fromListDedupe
         , fromListDedupeBy
@@ -19,7 +20,7 @@ module Dict.Extra
 
 # List operations
 
-@docs groupBy, fromListBy, fromListDedupe, fromListDedupeBy
+@docs groupBy, filterGroupBy, fromListBy, fromListDedupe, fromListDedupeBy
 
 
 # Manipulation
@@ -51,6 +52,57 @@ groupBy keyfn list =
     List.foldr
         (\x acc ->
             Dict.update (keyfn x) (Maybe.map ((::) x) >> Maybe.withDefault [ x ] >> Just) acc
+        )
+        Dict.empty
+        list
+
+
+{-| Takes a key-fn and a list.
+Creates a `Dict` which maps the key to a list of matching elements, skipping elements
+where key-fn returns `Nothing`
+
+    import Dict
+
+    filterGroupBy (String.uncons >> Maybe.map Tuple.first) [ "tree" , "", "tweet", "apple" , "leaf", "" ]
+    --> Dict.fromList [ ( 't', [ "tree", "tweet" ] ), ( 'a', [ "apple" ] ), ( 'l', [ "leaf" ] ) ]
+
+    filterGroupBy
+        .car
+        [ { name = "Mary"
+          , car = Just "Ford"
+          }
+        , { name = "Jack"
+          , car = Nothing
+          }
+        , { name = "Jill"
+          , car = Just "Tesla"
+          }
+        , { name = "John"
+          , car = Just "Tesla"
+          }
+        ]
+    --> Dict.fromList
+        [ ( "Ford"
+          , [ { name = "Mary" , car = Just "Ford" } ]
+          )
+        , ( "Tesla"
+          , [ { name = "Jill" , car = Just "Tesla" }
+            , { name = "John" , car = Just "Tesla" }
+            ]
+          )
+        ]
+
+-}
+filterGroupBy : (a -> Maybe comparable) -> List a -> Dict comparable (List a)
+filterGroupBy keyfn list =
+    List.foldr
+        (\x acc ->
+            case keyfn x of
+                Just key ->
+                    Dict.update key (Maybe.map ((::) x) >> Maybe.withDefault [ x ] >> Just) acc
+
+                Nothing ->
+                    acc
         )
         Dict.empty
         list
