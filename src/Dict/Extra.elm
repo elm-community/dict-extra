@@ -5,6 +5,7 @@ module Dict.Extra
         , fromListBy
         , fromListDedupe
         , fromListDedupeBy
+        , frequencies
         , removeWhen
         , removeMany
         , insertDedupe
@@ -20,7 +21,7 @@ module Dict.Extra
 
 # List operations
 
-@docs groupBy, filterGroupBy, fromListBy, fromListDedupe, fromListDedupeBy
+@docs groupBy, filterGroupBy, fromListBy, fromListDedupe, fromListDedupeBy, frequencies
 
 
 # Manipulation
@@ -154,6 +155,25 @@ fromListDedupeBy combine keyfn xs =
         (\x acc -> insertDedupe combine (keyfn x) x acc)
         Dict.empty
         xs
+
+
+{-| Count the number of occurences for each of the elements in the list.
+
+    frequencies [ "A", "B", "C", "B", "C", "B" ]
+    --> Dict.fromList [ ( "A", 1 ), ( "B", 3 ), ( "C", 2 ) ]
+
+-}
+frequencies : List comparable -> Dict comparable Int
+frequencies list =
+    list
+        |> List.foldl
+            (\el counter ->
+                Dict.get el counter
+                    |> Maybe.withDefault 0
+                    |> (\count -> count + 1)
+                    |> (\count -> Dict.insert el count counter)
+            )
+            Dict.empty
 
 
 {-| Remove elements which satisfies the predicate.
