@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3
+
+* `frequencies` counts number of elements in a `List Comparable`.
+
 ## 2.2
 
 * `filterGroupBy` is a version of `groupBy` that works similar to `List.filterMap`.
