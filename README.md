@@ -1,6 +1,10 @@
 # Dict Extra
 
-Convenience functions for working with Dict.
+Convenience functions for working with Dict. You can treat the functions in this library as an extension to the core module, by using the following import statement:
+
+```
+import Dict.Extra as Dict
+```
 
 Feedback and contributions are very welcome.
 
