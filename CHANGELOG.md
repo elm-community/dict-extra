@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.4
+
+* Added `any` function.
+
 ## 2.3
 
 * `frequencies` counts number of elements in a `List Comparable`.
