@@ -13,6 +13,7 @@ module Dict.Extra
         , mapKeys
         , filterMap
         , invert
+        , any
         , find
         )
 
@@ -29,9 +30,9 @@ module Dict.Extra
 @docs removeWhen, removeMany, keepOnly, insertDedupe, mapKeys, filterMap, invert
 
 
-# Find
+# Utilities
 
-@docs find
+@docs any, find
 
 -}
 
@@ -310,6 +311,32 @@ invert dict =
             Dict.insert v k acc
         )
         Dict.empty
+        dict
+
+
+{-| Determine if any key/value pair satisfies some test.
+
+    Dict.fromList [ ( 9, "Jill" ), ( 7, "Jill" ) ]
+        |> any (\_ value -> value == "Jill")
+    --> True
+
+    Dict.fromList [ ( 9, "Jill" ), ( 7, "Jill" ) ]
+        |> any (\key _ -> key == 5)
+    --> False
+
+-}
+any : (comparable -> a -> Bool) -> Dict comparable a -> Bool
+any predicate dict =
+    Dict.foldl
+        (\k v acc ->
+            if acc then
+                acc
+            else if predicate k v then
+                True
+            else
+                False
+        )
+        False
         dict
 
 
