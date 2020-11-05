@@ -27,6 +27,13 @@ import Dict exposing (Dict)
 import Set exposing (Set)
 
 
+{-| `Dict.get`, but with arguments flipped for currying
+-}
+getFrom : Dict comparable a -> a -> Maybe a
+getFrom dict key =
+    Dict.get key dict
+
+
 {-| Takes a key-fn and a list.
 Creates a `Dict` which maps the key to a list of matching elements.
 
