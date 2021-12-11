@@ -362,7 +362,7 @@ any predicate dict =
     --> True
 
     Dict.fromList [ ( 9, "Jill" ), ( 7, "Jill" ) ]
-        |> any (\key _ -> key == 9)
+        |> all (\key _ -> key == 9)
     --> False
 
 -}
