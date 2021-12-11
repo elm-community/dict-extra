@@ -1,7 +1,7 @@
 module Dict.Extra exposing
     ( groupBy, filterGroupBy, fromListBy, fromListDedupe, fromListDedupeBy, frequencies
     , removeWhen, removeMany, keepOnly, insertDedupe, mapKeys, filterMap, invert
-    , any, find
+    , any, all, find
     )
 
 {-| Convenience functions for working with `Dict`
@@ -19,7 +19,7 @@ module Dict.Extra exposing
 
 # Utilities
 
-@docs any, find
+@docs any, all, find
 
 -}
 
@@ -351,6 +351,24 @@ any predicate dict =
         )
         False
         dict
+
+
+{-| Determine if all key/value pairs satisfy some test.
+
+    import Dict
+
+    Dict.fromList [ ( 9, "Jill" ), ( 7, "Jill" ) ]
+        |> all (\_ value -> value == "Jill")
+    --> True
+
+    Dict.fromList [ ( 9, "Jill" ), ( 7, "Jill" ) ]
+        |> any (\key _ -> key == 9)
+    --> False
+
+-}
+all : (comparable -> a -> Bool) -> Dict comparable a -> Bool
+all predicate dict =
+    not <| any (\k v -> not <| predicate k v) dict
 
 
 {-| Find the first key/value pair that matches a predicate.
