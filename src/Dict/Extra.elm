@@ -1,6 +1,6 @@
 module Dict.Extra exposing
     ( groupBy, filterGroupBy, fromListBy, fromListDedupe, fromListDedupeBy, frequencies
-    , removeWhen, removeMany, keepOnly, insertDedupe, mapKeys, filterMap, invert
+    , removeWhen, removeMany, keepOnly, insertDedupe, mapKeys, filterMap, invert, unionDedupe, intersectDedupe, isSubsetBy
     , any, find
     )
 
@@ -14,7 +14,7 @@ module Dict.Extra exposing
 
 # Manipulation
 
-@docs removeWhen, removeMany, keepOnly, insertDedupe, mapKeys, filterMap, invert
+@docs removeWhen, removeMany, keepOnly, insertDedupe, mapKeys, filterMap, invert, unionDedupe, intersectDedupe, isSubsetBy
 
 
 # Utilities
@@ -321,6 +321,52 @@ invert dict =
         )
         Dict.empty
         dict
+
+
+{-| Combine two dictionaries. If there is a collision, both values are combined using the function.
+-}
+unionDedupe : (a -> a -> a) -> Dict comparable a -> Dict comparable a -> Dict comparable a
+unionDedupe combine a b =
+    Dict.merge
+        Dict.insert
+        (\k va vb -> Dict.insert k (combine va vb))
+        Dict.insert
+        a
+        b
+        Dict.empty
+
+
+{-| Keep only keys that appear in both dictionaries, combining their values with the function. If the function returns Nothing then the key is deleted.
+-}
+intersectDedupe : (a -> a -> Maybe a) -> Dict comparable a -> Dict comparable a -> Dict comparable a
+intersectDedupe combine a b =
+    Dict.merge
+        (\_ _ res -> res)
+        (\k va vb ->
+            case combine va vb of
+                Nothing ->
+                    identity
+
+                Just v ->
+                    Dict.insert k v
+        )
+        (\_ _ res -> res)
+        a
+        b
+        Dict.empty
+
+
+{-| Returns true if every key of the second dictionary appears in the first, and the function returns true for every pair of values at the same key.
+-}
+isSubsetBy : (a -> a -> Bool) -> Dict comparable a -> Dict comparable a -> Bool
+isSubsetBy compare larger smaller =
+    Dict.merge
+        (\_ _ -> (&&) True)
+        (\_ l s -> (&&) (compare l s))
+        (\_ _ -> (&&) False)
+        larger
+        smaller
+        True
 
 
 {-| Determine if any key/value pair satisfies some test.
