@@ -324,14 +324,6 @@ invert dict =
 
 
 {-| Combine two dictionaries. If there is a collision, both values are combined using the function.
-
-    import Dict
-
-    let a = Dict.fromList [ ("expenses", 38.25), ("assets", 100.85)]
-        b = Dict.fromList [ ("expenses, 2.50), ("liabilities", -2.50)]
-    in Dict.unionDedupe (+) a b
-    --> Dict.fromList []
-
 -}
 unionDedupe : (a -> a -> a) -> Dict comparable a -> Dict comparable a -> Dict comparable a
 unionDedupe combine a b =
